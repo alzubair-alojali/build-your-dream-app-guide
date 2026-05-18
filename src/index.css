@@ -343,7 +343,6 @@ code, kbd {
   background: var(--surface);
   padding: 10px;
   box-shadow: var(--shadow-lg);
-  overflow: hidden;
 }
 .screenshot::before {
   content: '';
@@ -361,7 +360,136 @@ code, kbd {
   border-radius: calc(var(--r-xl) - 10px);
 }
 
-/* Annotation overlay — positioned by % to stay responsive */
+/* Numbered mark on the screenshot (tiny circle), with labels listed below */
+.shot-figure {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.shot-mark {
+  position: absolute;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  padding: 0 8px;
+  border-radius: 999px;
+  background: var(--gdg-blue);
+  color: white;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 1;
+  box-shadow: 0 0 0 4px rgba(255,255,255,0.85), 0 8px 18px -6px rgba(16,24,40,0.35);
+  z-index: 2;
+  transform: translate(-50%, -50%);
+  animation: markPulse 2.4s var(--ease-out) infinite;
+  white-space: nowrap;
+}
+.shot-mark.red    { background: var(--gdg-red); }
+.shot-mark.yellow { background: var(--gdg-yellow); color: #422a00; }
+.shot-mark.green  { background: var(--gdg-green); }
+/* When a mark is positioned via right/bottom, the translate origin flips */
+.shot-mark[style*="right"]  { transform: translate(50%, -50%); }
+.shot-mark[style*="bottom"] { transform: translate(-50%, 50%); }
+.shot-mark[style*="right"][style*="bottom"] { transform: translate(50%, 50%); }
+
+@keyframes markPulse {
+  0%   { box-shadow: 0 0 0 4px rgba(255,255,255,0.85), 0 8px 18px -6px rgba(16,24,40,0.35), 0 0 0 0 rgba(66,133,244,0.45); }
+  70%  { box-shadow: 0 0 0 4px rgba(255,255,255,0.85), 0 8px 18px -6px rgba(16,24,40,0.35), 0 0 0 12px rgba(66,133,244,0); }
+  100% { box-shadow: 0 0 0 4px rgba(255,255,255,0.85), 0 8px 18px -6px rgba(16,24,40,0.35), 0 0 0 0 rgba(66,133,244,0); }
+}
+
+.shot-legend {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+.shot-legend li {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 10px 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-sm);
+  font-size: 14px;
+  color: var(--ink-2);
+  line-height: 1.4;
+}
+.shot-legend li.blue   { border-color: rgba(66,133,244,0.30); }
+.shot-legend li.red    { border-color: rgba(234,67,53,0.30); }
+.shot-legend li.yellow { border-color: rgba(251,188,4,0.45); }
+.shot-legend li.green  { border-color: rgba(52,168,83,0.30); }
+.shot-legend__num {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  height: 28px;
+  padding: 0 8px;
+  border-radius: 999px;
+  background: var(--gdg-blue);
+  color: white;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 13px;
+  line-height: 1;
+}
+.shot-legend li.red    .shot-legend__num { background: var(--gdg-red); }
+.shot-legend li.yellow .shot-legend__num { background: var(--gdg-yellow); color: #422a00; }
+.shot-legend li.green  .shot-legend__num { background: var(--gdg-green); }
+.shot-legend__label {
+  align-self: center;
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.shot-caption {
+  font-size: 13px;
+  color: var(--ink-3);
+  text-align: center;
+}
+
+/* Closing-slide meeting block */
+.meet-block {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 22px;
+}
+.meet-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-sm);
+}
+.meet-item__key {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gdg-blue);
+}
+.meet-item__value { font-size: 17px; color: var(--ink); }
+.meet-item:nth-child(2) .meet-item__key { color: var(--gdg-green); }
+@media (max-width: 560px) {
+  .meet-block { grid-template-columns: 1fr; }
+}
+
+/* Legacy annotation (no longer used; kept for safety) */
 .anno {
   position: absolute;
   display: inline-flex;
@@ -666,4 +794,8 @@ code, kbd {
   .screenshot { padding: 6px; border-radius: 18px; }
   .screenshot img { border-radius: 12px; }
   .cover__meta .chip { font-size: 11px; }
+  .shot-mark { width: 26px; height: 26px; min-width: 26px; font-size: 12px; padding: 0 6px; }
+  .shot-legend { gap: 8px; }
+  .shot-legend li { padding: 8px 12px; font-size: 13px; }
+  .shot-legend__num { min-width: 24px; height: 24px; font-size: 12px; padding: 0 6px; }
 }

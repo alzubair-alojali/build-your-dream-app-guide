@@ -59,7 +59,7 @@ function App() {
     <div className="deck">
       <header className="deck__topbar" role="banner">
         <div className="brand">
-          <img src="/images/gdg-logo.png" alt="GDG" />
+          <img src="/images/gdg-logo.webp" alt="GDG" />
           <span>
             Build Your Dream App <small>· Day 1 Guide</small>
           </span>

@@ -4,52 +4,67 @@ import type { CSSProperties, ReactNode } from 'react'
    Reusable primitives
 ------------------------------------------------------------ */
 
-type AnnoColor = 'blue' | 'red' | 'yellow' | 'green'
+type MarkColor = 'blue' | 'red' | 'yellow' | 'green'
 
-function Anno({
-  label,
-  number,
-  color = 'blue',
-  style,
-}: {
-  label: string
-  number: number | string
-  color?: AnnoColor
-  style: CSSProperties
-}) {
-  return (
-    <span className={`anno ${color}`} style={style}>
-      <span className="arrow">{number}</span>
-      {label}
-    </span>
-  )
+type Mark = {
+  n: number | string
+  label: ReactNode
+  color?: MarkColor
+  /** position of the small numbered dot inside the screenshot (% values) */
+  top?: string
+  left?: string
+  right?: string
+  bottom?: string
 }
 
 function Shot({
   src,
   alt,
-  children,
+  marks,
+  caption,
 }: {
   src: string
   alt: string
-  children?: ReactNode
+  marks?: Mark[]
+  caption?: ReactNode
 }) {
   return (
-    <div className="screenshot">
-      <img src={src} alt={alt} loading="lazy" />
-      {children}
-    </div>
+    <figure className="shot-figure">
+      <div className="screenshot">
+        <img src={src} alt={alt} loading="lazy" />
+        {marks?.map((m, i) => {
+          const style: CSSProperties = {
+            top: m.top,
+            left: m.left,
+            right: m.right,
+            bottom: m.bottom,
+          }
+          return <span key={i} className={`shot-mark ${m.color ?? 'blue'}`} style={style}>{m.n}</span>
+        })}
+      </div>
+      {marks && marks.length > 0 && (
+        <ol className="shot-legend" aria-label="Annotations">
+          {marks.map((m, i) => (
+            <li key={i} className={m.color ?? 'blue'}>
+              <span className="shot-legend__num">{m.n}</span>
+              <span className="shot-legend__label">{m.label}</span>
+            </li>
+          ))}
+        </ol>
+      )}
+      {caption && <figcaption className="shot-caption">{caption}</figcaption>}
+    </figure>
   )
 }
 
-function Eyebrow({ children, color = 'blue' as AnnoColor }: { children: ReactNode; color?: AnnoColor }) {
-  const colorMap: Record<AnnoColor, string> = {
+function Eyebrow({ children, color = 'blue' as MarkColor }: { children: ReactNode; color?: MarkColor }) {
+  const colorMap: Record<MarkColor, string> = {
     blue: 'var(--gdg-blue)',
     red: 'var(--gdg-red)',
     yellow: '#8a6700',
     green: 'var(--gdg-green)',
   }
-  const dotColor: Record<AnnoColor, string> = {
+  const dotColor: Record<MarkColor, string> = {
     blue: 'var(--gdg-blue)',
     red: 'var(--gdg-red)',
     yellow: 'var(--gdg-yellow)',
@@ -70,7 +85,7 @@ function StepHeader({
   lede,
 }: {
   step: number
-  color: AnnoColor
+  color: MarkColor
   title: string
   lede?: ReactNode
 }) {
@@ -87,7 +102,7 @@ function StepHeader({
 }
 
 /* ------------------------------------------------------------
-   Slide components
+   Slides
 ------------------------------------------------------------ */
 
 function CoverSlide() {
@@ -102,14 +117,14 @@ function CoverSlide() {
           <span className="accent-4">AI.</span>
         </h1>
         <p className="lede" style={{ marginTop: 18 }}>
-          Today is design day — no code, no laptop required. We'll shape your app's design system
-          with <strong>Specflow</strong>, then generate the UI with <strong>Google Stitch</strong>.
+          Day one is design day. We'll shape your app's design system with{' '}
+          <strong>Specflow</strong>, then generate the UI with <strong>Google Stitch</strong>.
           Tomorrow we build it for real.
         </p>
         <div className="cover__meta">
-          <span className="chip blue">No laptop needed today</span>
-          <span className="chip yellow">Bring it tomorrow</span>
-          <span className="chip green">~90 min walkthrough</span>
+          <span className="chip blue">Specflow → Stitch</span>
+          <span className="chip yellow">~90 min walkthrough</span>
+          <span className="chip green">Free Google AI credits inside</span>
         </div>
         <div className="kbd-row" style={{ marginTop: 24 }}>
           Navigate <kbd>←</kbd> <kbd>→</kbd> or swipe · Press <kbd>Space</kbd> to advance
@@ -124,7 +139,7 @@ function CoverSlide() {
         <span className="orbit__dot y" />
         <span className="orbit__dot g" />
         <div className="orbit__center">
-          <img src="/images/gdg-logo.png" alt="" />
+          <img src="/images/gdg-logo.webp" alt="" />
         </div>
       </div>
     </div>
@@ -138,8 +153,7 @@ function AgendaSlide() {
         <Eyebrow>Today's plan</Eyebrow>
         <h2 style={{ marginTop: 10 }}>Three moves to a full UI design.</h2>
         <p className="lede" style={{ marginTop: 12 }}>
-          No code yet. We design the system, write the content, and generate the screens — all from
-          a browser.
+          We design the system, write the content, and generate the screens — all from a browser.
         </p>
       </header>
       <div className="row cols-3">
@@ -160,8 +174,8 @@ function AgendaSlide() {
         </div>
       </div>
       <div className="note">
-        <strong>Heads up:</strong>&nbsp;Tomorrow is the real coding day. You'll need a laptop with
-        Node.js and Google Antigravity installed — links on the last slide.
+        <strong>Heads up:</strong>&nbsp;Tomorrow is the real coding day. Install Node.js and
+        Google Antigravity in advance — download links are on the last slide.
       </div>
     </>
   )
@@ -200,7 +214,7 @@ function ToolsSlide() {
         <div className="tool">
           <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
             <div className="logo">
-              <img src="/images/stitch.png" alt="Stitch" />
+              <img src="/images/stitch.webp" alt="Stitch" />
             </div>
             <div>
               <h3>Google Stitch</h3>
@@ -237,21 +251,15 @@ function Step1Slide() {
           </>
         }
       />
-      <Shot src="/screens/image_1779129587025.png" alt="Specflow homepage">
-        <Anno
-          number={1}
-          label="Click ‘Start the conversation’"
-          color="blue"
-          style={{ top: '52%', left: '4%' }}
-        />
-        <Anno
-          number={2}
-          label="Or claim a free Google AI credit first"
-          color="yellow"
-          style={{ top: '70%', left: '4%' }}
-        />
-        <Anno number="EN/AR" label="Language toggle" color="red" style={{ top: '4%', right: '6%' }} />
-      </Shot>
+      <Shot
+        src="/screens/image_1779129587025.webp"
+        alt="Specflow homepage"
+        marks={[
+          { n: 1, label: "Click ‘Start the conversation’", color: 'blue', top: '52%', left: '6%' },
+          { n: 2, label: 'Or claim a free Google AI credit first', color: 'yellow', top: '69%', left: '6%' },
+          { n: 3, label: 'Language toggle (EN / AR)', color: 'red', top: '5%', right: '14%' },
+        ]}
+      />
     </>
   )
 }
@@ -266,14 +274,13 @@ function Step2Slide() {
         lede="Three single-use credits, $5 each. First click wins. Opens in a new tab — sign in with Google to claim, then come back."
       />
       <div className="row cols-2">
-        <Shot src="/screens/image_1779129598217.png" alt="Three Google AI credits dropdown">
-          <Anno
-            number={1}
-            label="Click ‘Claim’ on any unused credit"
-            color="green"
-            style={{ top: '46%', right: '4%' }}
-          />
-        </Shot>
+        <Shot
+          src="/screens/image_1779129598217.webp"
+          alt="Three Google AI credits dropdown"
+          marks={[
+            { n: 1, label: 'Click ‘Claim’ on any unused credit', color: 'green', top: '44%', right: '14%' },
+          ]}
+        />
         <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
           <div className="card card--yellow">
             <h3>What you get</h3>
@@ -300,30 +307,27 @@ function Step3Slide() {
         step={3}
         color="blue"
         title="Pick what you're building."
-        lede="Portfolio, Landing page, Dashboard, or Documentation site. For today's workshop, Landing page is the easiest to ship — but pick what fits your dream."
+        lede="Portfolio, Landing page, Dashboard, or Documentation site. Landing page is the easiest first target — but pick what fits your dream."
       />
       <div className="row cols-2">
-        <Shot src="/screens/image_1779129619742.png" alt="Specflow app type chooser">
-          <Anno
-            number={1}
-            label="Tap a card to select"
-            color="blue"
-            style={{ top: '42%', left: '30%' }}
-          />
-          <Anno
-            number={2}
-            label="Then ‘Continue’"
-            color="green"
-            style={{ bottom: '6%', right: '6%' }}
-          />
-        </Shot>
-        <Shot src="/screens/image_1779129633471.png" alt="Specflow app type chooser in Arabic">
-          <Anno number="AR" label="Same screen, switched to Arabic" color="red" style={{ top: '10%', left: '6%' }} />
-        </Shot>
+        <Shot
+          src="/screens/image_1779129619742.webp"
+          alt="Specflow app type chooser"
+          marks={[
+            { n: 1, label: 'Tap a card to select', color: 'blue', top: '42%', left: '32%' },
+            { n: 2, label: 'Then ‘Continue’', color: 'green', bottom: '14%', right: '8%' },
+          ]}
+        />
+        <Shot
+          src="/screens/image_1779129633471.webp"
+          alt="Specflow app type chooser in Arabic"
+          marks={[
+            { n: 'AR', label: 'Same screen, switched to Arabic — layout flips, labels translate', color: 'red', top: '8%', left: '6%' },
+          ]}
+        />
       </div>
       <div className="note">
-        <strong>RTL works.</strong>&nbsp;Layout flips, labels translate. Switch any time from the
-        top bar — your progress is saved.
+        <strong>RTL works.</strong>&nbsp;Switch any time from the top bar — your progress is saved.
       </div>
     </>
   )
@@ -338,20 +342,14 @@ function Step4Slide() {
         title="Now, what should it feel like?"
         lede="Pick a palette that matches the mood. Filter by vibe (Editorial, Minimal, Vibrant, Earthy, Moody, Playful) if you want to narrow it down."
       />
-      <Shot src="/screens/image_1779129646964.png" alt="Specflow color palette picker">
-        <Anno
-          number={1}
-          label="Tap any palette · multi-select OK"
-          color="red"
-          style={{ top: '32%', left: '46%' }}
-        />
-        <Anno
-          number={2}
-          label="Filter by vibe up top"
-          color="blue"
-          style={{ top: '22%', left: '4%' }}
-        />
-      </Shot>
+      <Shot
+        src="/screens/image_1779129646964.webp"
+        alt="Specflow color palette picker"
+        marks={[
+          { n: 1, label: 'Filter by vibe up top', color: 'blue', top: '22%', left: '6%' },
+          { n: 2, label: 'Tap any palette · multi-select OK', color: 'red', top: '36%', left: '48%' },
+        ]}
+      />
     </>
   )
 }
@@ -365,20 +363,14 @@ function Step5Slide() {
         title="Pick the motion."
         lede="Hover any tile to see the loop. Multi-select is welcome — you're choosing the vocabulary your app will animate with: entrances, scroll, hover, page transitions, micro-interactions, text effects."
       />
-      <Shot src="/screens/image_1779129657566.png" alt="Specflow motion picker">
-        <Anno
-          number={1}
-          label="Categories — tap to switch"
-          color="green"
-          style={{ top: '24%', left: '4%' }}
-        />
-        <Anno
-          number={2}
-          label="Hover to preview · tap to add"
-          color="blue"
-          style={{ top: '54%', left: '32%' }}
-        />
-      </Shot>
+      <Shot
+        src="/screens/image_1779129657566.webp"
+        alt="Specflow motion picker"
+        marks={[
+          { n: 1, label: 'Categories — tap to switch', color: 'green', top: '24%', left: '6%' },
+          { n: 2, label: 'Hover to preview · tap to add', color: 'blue', top: '56%', left: '34%' },
+        ]}
+      />
       <div className="note green">
         <strong>Less is more.</strong>&nbsp;3–5 effects across the whole app is usually plenty. You
         can revisit later.
@@ -396,20 +388,14 @@ function Step6Slide() {
         title="Answer the brief — about ten questions."
         lede="This is where your idea becomes a spec. Product name, one-sentence pitch, the single most important CTA, audience, tone — the harder part, but the most valuable."
       />
-      <Shot src="/screens/image_1779129696519.png" alt="Specflow brief questions">
-        <Anno
-          number={1}
-          label="Short answers only — keep it sharp"
-          color="yellow"
-          style={{ top: '34%', left: '4%' }}
-        />
-        <Anno
-          number={2}
-          label="‘Continue’ after each answer"
-          color="blue"
-          style={{ top: '46%', left: '4%' }}
-        />
-      </Shot>
+      <Shot
+        src="/screens/image_1779129696519.webp"
+        alt="Specflow brief questions"
+        marks={[
+          { n: 1, label: 'Short answers only — keep it sharp', color: 'yellow', top: '36%', left: '6%' },
+          { n: 2, label: '‘Continue’ after each answer', color: 'blue', top: '52%', left: '6%' },
+        ]}
+      />
     </>
   )
 }
@@ -430,20 +416,14 @@ function Step7Slide() {
         }
       />
       <div className="row cols-2">
-        <Shot src="/screens/image_1779129713641.png" alt="Specflow export screen">
-          <Anno
-            number={1}
-            label="Click ‘Download design.md’"
-            color="blue"
-            style={{ bottom: '14%', left: '28%' }}
-          />
-          <Anno
-            number={2}
-            label="Repeat for skill.md"
-            color="green"
-            style={{ top: '20%', left: '4%' }}
-          />
-        </Shot>
+        <Shot
+          src="/screens/image_1779129713641.webp"
+          alt="Specflow export screen"
+          marks={[
+            { n: 1, label: 'Click ‘Download design.md’', color: 'blue', bottom: '14%', left: '30%' },
+            { n: 2, label: 'Repeat for skill.md', color: 'green', top: '22%', left: '6%' },
+          ]}
+        />
         <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
           <div className="card card--accent">
             <h3>What's inside</h3>
@@ -473,23 +453,21 @@ function Step8Slide() {
         lede="Open Gemini (or any model — Claude, ChatGPT). Paste your design.md and ask it to write a Stitch content prompt: section-by-section copy that follows the anti-slop rules in design.md."
       />
       <div className="row cols-2">
-        <Shot src="/screens/image_1779129814081.png" alt="Asking Gemini for a Stitch content prompt">
-          <Anno number={1} label="Attach design.md" color="red" style={{ top: '22%', right: '6%' }} />
-          <Anno
-            number={2}
-            label="Ask for content prompt only"
-            color="blue"
-            style={{ top: '54%', left: '4%' }}
-          />
-        </Shot>
-        <Shot src="/screens/image_1779129823776.png" alt="Gemini returns a section-by-section prompt">
-          <Anno
-            number={3}
-            label="Copy this whole reply"
-            color="green"
-            style={{ top: '50%', left: '4%' }}
-          />
-        </Shot>
+        <Shot
+          src="/screens/image_1779129814081.webp"
+          alt="Asking Gemini for a Stitch content prompt"
+          marks={[
+            { n: 1, label: 'Attach design.md', color: 'red', top: '22%', right: '14%' },
+            { n: 2, label: 'Ask for content prompt only', color: 'blue', top: '54%', left: '6%' },
+          ]}
+        />
+        <Shot
+          src="/screens/image_1779129823776.webp"
+          alt="Gemini returns a section-by-section prompt"
+          marks={[
+            { n: 3, label: 'Copy this whole reply', color: 'green', top: '50%', left: '6%' },
+          ]}
+        />
       </div>
       <div className="note red">
         <strong>Why a separate prompt?</strong>&nbsp;Stitch is great at layout, but you want
@@ -514,26 +492,15 @@ function Step9Slide() {
           </>
         }
       />
-      <Shot src="/screens/image_1779129881796.png" alt="Stitch welcome with files attached">
-        <Anno
-          number={1}
-          label="Drag-drop design.md + skill.md"
-          color="green"
-          style={{ top: '22%', left: '30%' }}
-        />
-        <Anno
-          number={2}
-          label="Paste the content prompt below"
-          color="blue"
-          style={{ top: '60%', left: '30%' }}
-        />
-        <Anno
-          number={3}
-          label="Select 3.1 Pro · pick Web (not App)"
-          color="red"
-          style={{ bottom: '12%', right: '6%' }}
-        />
-      </Shot>
+      <Shot
+        src="/screens/image_1779129881796.webp"
+        alt="Stitch welcome with files attached"
+        marks={[
+          { n: 1, label: 'Drag-drop design.md + skill.md', color: 'green', top: '22%', left: '32%' },
+          { n: 2, label: 'Paste the content prompt below', color: 'blue', top: '62%', left: '32%' },
+          { n: 3, label: 'Select 3.1 Pro · pick Web (not App)', color: 'red', bottom: '14%', right: '8%' },
+        ]}
+      />
       <div className="row cols-3" style={{ marginTop: 4 }}>
         <div className="card">
           <Eyebrow color="red">Must check</Eyebrow>
@@ -564,26 +531,15 @@ function Step10Slide() {
         title="Generate, then chat your way to better."
         lede="The first generation is a starting point. Talk to Stitch like a designer: ‘make the hero quieter’, ‘tighten the inventory cards’, ‘swap the CTA to outline’. It edits live."
       />
-      <Shot src="/screens/image_1779129927627.png" alt="Stitch generated UI with multiple sections">
-        <Anno
-          number={1}
-          label="All sections, side by side"
-          color="blue"
-          style={{ top: '8%', left: '20%' }}
-        />
-        <Anno
-          number={2}
-          label="Type changes here · live edits"
-          color="green"
-          style={{ bottom: '8%', left: '32%' }}
-        />
-        <Anno
-          number={3}
-          label="Export when happy"
-          color="yellow"
-          style={{ top: '6%', right: '6%' }}
-        />
-      </Shot>
+      <Shot
+        src="/screens/image_1779129927627.webp"
+        alt="Stitch generated UI with multiple sections"
+        marks={[
+          { n: 1, label: 'All sections, side by side', color: 'blue', top: '8%', left: '22%' },
+          { n: 2, label: 'Type changes here · live edits', color: 'green', bottom: '10%', left: '34%' },
+          { n: 3, label: 'Export when happy', color: 'yellow', top: '6%', right: '8%' },
+        ]}
+      />
       <div className="note blue">
         <strong>You're done with Day 1.</strong>&nbsp;Save your Stitch project — tomorrow we wire
         these screens into real code.
@@ -607,7 +563,7 @@ function TomorrowSlide() {
         <div className="tool">
           <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
             <div className="logo">
-              <img src="/images/antigravity.jpg" alt="Google Antigravity" />
+              <img src="/images/antigravity.webp" alt="Google Antigravity" />
             </div>
             <div>
               <h3>Google Antigravity</h3>
@@ -625,7 +581,7 @@ function TomorrowSlide() {
         <div className="tool">
           <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
             <div className="logo">
-              <img src="/images/node.png" alt="Node.js" />
+              <img src="/images/node.webp" alt="Node.js" />
             </div>
             <div>
               <h3>Node.js (LTS)</h3>
@@ -642,8 +598,8 @@ function TomorrowSlide() {
         </div>
       </div>
       <div className="row cols-2">
-        <Shot src="/screens/image_1779129980907.png" alt="Antigravity download page" />
-        <Shot src="/screens/image_1779130012005.png" alt="Node.js download page" />
+        <Shot src="/screens/image_1779129980907.webp" alt="Antigravity download page" />
+        <Shot src="/screens/image_1779130012005.webp" alt="Node.js download page" />
       </div>
     </>
   )
@@ -660,6 +616,16 @@ function ClosingSlide() {
           <span className="accent-3">the</span>{' '}
           <span className="accent-4">laptop.</span>
         </h1>
+        <div className="meet-block">
+          <div className="meet-item">
+            <span className="meet-item__key">Where</span>
+            <span className="meet-item__value">Same place · <strong>Room 25</strong></span>
+          </div>
+          <div className="meet-item">
+            <span className="meet-item__key">When</span>
+            <span className="meet-item__value">Same time · <strong>4:30 PM</strong></span>
+          </div>
+        </div>
         <p className="lede" style={{ marginTop: 18 }}>
           You now have a design system, a Stitch project, and two installers ready. Tomorrow we
           plug it all into Antigravity and ship a real app — your dream app.
@@ -678,10 +644,6 @@ function ClosingSlide() {
             Node.js
           </a>
         </div>
-        <div className="note green" style={{ marginTop: 24 }}>
-          Missed today or didn't bring your laptop? You're caught up. Re-run this deck whenever
-          you want — and don't forget the laptop tomorrow.
-        </div>
       </div>
       <div className="orbit" aria-hidden="true">
         <div className="orbit__ring" />
@@ -692,7 +654,7 @@ function ClosingSlide() {
         <span className="orbit__dot y" />
         <span className="orbit__dot g" />
         <div className="orbit__center">
-          <img src="/images/gdg-logo.png" alt="" />
+          <img src="/images/gdg-logo.webp" alt="" />
         </div>
       </div>
     </div>

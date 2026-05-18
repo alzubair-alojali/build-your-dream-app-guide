@@ -26,3 +26,5 @@ dist-ssr
 # Playwright artifacts from local verification
 .playwright-mcp/
 deck-*.png
+
+.vercel

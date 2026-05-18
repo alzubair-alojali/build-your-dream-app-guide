@@ -1,0 +1,4 @@
+content/
+.playwright-mcp/
+deck-*.png
+node_modules/
