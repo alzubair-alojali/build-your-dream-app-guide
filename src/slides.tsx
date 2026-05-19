@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import type { CSSProperties, ReactNode } from 'react'
 
 /* ------------------------------------------------------------
@@ -662,12 +663,420 @@ function ClosingSlide() {
 }
 
 /* ------------------------------------------------------------
+   Day 2 slides
+------------------------------------------------------------ */
+
+function Day2DividerSlide() {
+  return (
+    <div className="cover divider">
+      <div>
+        <Eyebrow color="green">Day 2 · today</Eyebrow>
+        <h1 style={{ marginTop: 14 }}>
+          <span className="accent-1">Make</span>{' '}
+          <span className="accent-2">it</span>{' '}
+          <span className="accent-4">real.</span>
+        </h1>
+        <p className="lede" style={{ marginTop: 18 }}>
+          Yesterday we designed it. Today we build it. You'll export your Stitch screens,
+          scaffold a Vite + React + TypeScript app, drop everything into Antigravity, and let the
+          agent assemble it.
+        </p>
+        <div className="cover__meta">
+          <span className="chip blue">Stitch → Zip</span>
+          <span className="chip yellow">Vite + React + TS</span>
+          <span className="chip red">Antigravity</span>
+          <span className="chip green">Agent builds it</span>
+        </div>
+      </div>
+      <div className="orbit" aria-hidden="true">
+        <div className="orbit__ring" />
+        <div className="orbit__ring r2" />
+        <div className="orbit__ring r3" />
+        <span className="orbit__dot b" />
+        <span className="orbit__dot r" />
+        <span className="orbit__dot y" />
+        <span className="orbit__dot g" />
+        <div className="orbit__center">
+          <span className="big-2">2</span>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function Day2Step1Slide() {
+  return (
+    <>
+      <StepHeader
+        step={1}
+        color="blue"
+        title="Back to Stitch — export your screens."
+        lede="Open your Stitch project from yesterday. The sections you generated are still on the canvas. Click Export, pick the Zip format, then Export — you'll get one folder per section."
+      />
+      <div className="row cols-2">
+        <Shot
+          src="/screens/image_1779220746331.webp"
+          alt="Stitch canvas with generated sections"
+          marks={[
+            { n: 1, label: 'Sections live on the canvas', color: 'blue', top: '34%', left: '40%' },
+            { n: 2, label: 'Click Export', color: 'green', top: '5%', right: '14%' },
+          ]}
+        />
+        <Shot
+          src="/screens/image_1779220758270.webp"
+          alt="Stitch export panel with Zip selected"
+          marks={[
+            { n: 3, label: 'Select Zip', color: 'red', top: '50%', right: '14%' },
+            { n: 4, label: 'Click Export to download', color: 'green', bottom: '12%', right: '14%' },
+          ]}
+        />
+      </div>
+      <div className="note blue">
+        <strong>You'll get:</strong>&nbsp;a zip with one folder per section — <code>hero_section</code>,
+        <code>inventory_section</code>, <code>process_section</code>, <code>review_section</code>,
+        <code>cta_section</code>, plus the palette folder. Unzip it somewhere you can find.
+      </div>
+    </>
+  )
+}
+
+function Day2Step2Slide() {
+  return (
+    <>
+      <StepHeader
+        step={2}
+        color="yellow"
+        title="Make a build folder and open a terminal."
+        lede="Create an empty folder anywhere — Desktop works fine. Right-click inside it and choose ‘Open in Terminal’. Then allow npm scripts to run (Windows one-time setup)."
+      />
+      <div className="row cols-2">
+        <Shot
+          src="/screens/image_1779220823087.webp"
+          alt="Right-click open in terminal on the build folder"
+          marks={[
+            { n: 1, label: 'Right-click → Open in Terminal', color: 'yellow', top: '74%', right: '14%' },
+          ]}
+        />
+        <Shot
+          src="/screens/image_1779220842535.webp"
+          alt="PowerShell Set-ExecutionPolicy"
+          marks={[
+            { n: 2, label: 'Paste the command, press Enter', color: 'blue', top: '40%', left: '20%' },
+          ]}
+        />
+      </div>
+      <CodeBlock language="powershell" code="Set-ExecutionPolicy RemoteSigned -Scope CurrentUser" />
+      <div className="note">
+        <strong>Why this command?</strong>&nbsp;Windows blocks PowerShell scripts by default —
+        without this, <code>npm</code> and <code>npx</code> can fail with a security error. Answer
+        <strong> Y</strong> when prompted. macOS / Linux users skip this step.
+      </div>
+    </>
+  )
+}
+
+function Day2Step3Slide() {
+  return (
+    <>
+      <StepHeader
+        step={3}
+        color="red"
+        title="Scaffold a Vite + React + TypeScript app."
+        lede={
+          <>
+            Run <code>npm create vite@latest</code>. Give it a project name (e.g. <code>car-app</code>),
+            pick <strong>React</strong> as the framework, <strong>TypeScript</strong> as the variant,
+            and let it install and start the dev server.
+          </>
+        }
+      />
+      <CodeBlock language="powershell" code="npm create vite@latest" />
+      <div className="row cols-3">
+        <Shot
+          src="/screens/image_1779220871499.webp"
+          alt="Select React as the framework"
+          marks={[{ n: 1, label: 'Framework: React', color: 'blue', top: '46%', left: '20%' }]}
+        />
+        <Shot
+          src="/screens/image_1779220876894.webp"
+          alt="Select TypeScript variant"
+          marks={[{ n: 2, label: 'Variant: TypeScript', color: 'red', top: '50%', left: '32%' }]}
+        />
+        <Shot
+          src="/screens/image_1779220979617.webp"
+          alt="Vite dev server ready"
+          marks={[{ n: 3, label: 'Dev server runs at localhost:5173', color: 'green', bottom: '32%', left: '28%' }]}
+        />
+      </div>
+      <div className="note red">
+        <strong>Heads up:</strong>&nbsp;When asked “Install with npm and start now?” → answer
+        <strong> Yes</strong>. Vite installs deps and opens the dev server in seconds.
+      </div>
+    </>
+  )
+}
+
+function Day2Step4Slide() {
+  return (
+    <>
+      <StepHeader
+        step={4}
+        color="green"
+        title="Open the project in Google Antigravity."
+        lede="Launch Antigravity. From the welcome screen, click Open Folder and pick the project you just scaffolded (e.g. Desktop/build/car-app). The Agent panel on the right is where you'll talk to the AI."
+      />
+      <div className="row cols-2">
+        <Shot
+          src="/screens/image_1779221005113.webp"
+          alt="Antigravity welcome screen"
+          marks={[
+            { n: 1, label: 'Click ‘Open Folder’', color: 'green', top: '44%', left: '40%' },
+            { n: 2, label: 'Agent panel — your AI pair', color: 'blue', top: '50%', right: '14%' },
+          ]}
+        />
+        <Shot
+          src="/screens/image_1779221060887.webp"
+          alt="car-app open in Antigravity"
+          marks={[
+            { n: 3, label: 'Project files in the explorer', color: 'blue', top: '24%', left: '10%' },
+            { n: 4, label: 'Ctrl + L to chat with the agent', color: 'red', top: '74%', left: '50%' },
+          ]}
+        />
+      </div>
+      <div className="note green">
+        <strong>Pick the model:</strong>&nbsp;Use <strong>Claude Opus (Thinking)</strong> for the
+        first wire-up — it handles multi-file orchestration well.
+      </div>
+    </>
+  )
+}
+
+function Day2Step5Slide() {
+  return (
+    <>
+      <StepHeader
+        step={5}
+        color="blue"
+        title="Drop your Stitch sections into the project."
+        lede={
+          <>
+            In Antigravity's explorer, create a new folder at the project root called{' '}
+            <code>screens</code>. Then drag every <code>*_section</code> folder from your unzipped
+            Stitch download into it. Drop the palette folder in too.
+          </>
+        }
+      />
+      <div className="row cols-3">
+        <Shot
+          src="/screens/image_1779221078742.webp"
+          alt="Creating the screens folder"
+          marks={[{ n: 1, label: 'New folder: screens', color: 'blue', top: '18%', left: '20%' }]}
+        />
+        <Shot
+          src="/screens/image_1779221183666.webp"
+          alt="Unzipped Stitch sections in Downloads"
+          marks={[{ n: 2, label: 'The unzipped section folders', color: 'yellow', top: '50%', left: '40%' }]}
+        />
+        <Shot
+          src="/screens/image_1779221188986.webp"
+          alt="Sections inside car-app/screens"
+          marks={[{ n: 3, label: 'All sections in /screens', color: 'green', top: '30%', left: '20%' }]}
+        />
+      </div>
+      <div className="note blue">
+        <strong>One folder per section.</strong>&nbsp;Each contains the HTML/CSS Stitch
+        generated. The agent will use them as reference for the React components.
+      </div>
+    </>
+  )
+}
+
+function Day2Step6Slide() {
+  return (
+    <>
+      <StepHeader
+        step={6}
+        color="yellow"
+        title="Drop code.md into the project root."
+        lede={
+          <>
+            Remember the third file Specflow gave you yesterday — <code>code.md</code>? Drag it
+            into the project root (right next to <code>package.json</code>). This is the
+            implementation spec the agent will follow.
+          </>
+        }
+      />
+      <div className="row cols-2">
+        <Shot
+          src="/screens/image_1779221219152.webp"
+          alt="Dragging code.md into Antigravity"
+          marks={[{ n: 1, label: 'Drop code.md anywhere in the file tree', color: 'yellow', top: '54%', left: '16%' }]}
+        />
+        <Shot
+          src="/screens/image_1779221234118.webp"
+          alt="code.md added to project root"
+          marks={[{ n: 2, label: 'Lives at the project root', color: 'green', top: '24%', left: '12%' }]}
+        />
+      </div>
+      <div className="note">
+        <strong>What's <code>code.md</code> for?</strong>&nbsp;It's the implementation contract —
+        component breakdown, file structure, naming conventions, anti-slop rules. The agent reads
+        it first, then builds.
+      </div>
+    </>
+  )
+}
+
+const AGENT_PROMPT = `Use code.md as the implementation spec for this app.
+The Stitch design output lives in /screens — each subfolder is one section
+(hero, inventory, process, review, cta) with HTML and CSS to use as
+visual reference, not to copy verbatim.
+
+Build a single-page React + TypeScript site under /src:
+  1. Read code.md first and follow its file structure, naming, and
+     anti-slop rules exactly.
+  2. For each section folder in /screens, create a matching React
+     component under src/components. Translate the layout, spacing,
+     typography, and motion — don't paste the raw HTML.
+  3. Compose the sections in src/App.tsx in the order they appear in
+     code.md.
+  4. Use the palette folder's tokens as CSS variables. No raw hex.
+  5. Keep accessibility tight: alt text, focus rings, reduced-motion.
+  6. When you're done, run npm run dev and confirm the page renders
+     with no console errors.
+
+Plan first, then write code. Ask me before scope changes.`
+
+function Day2Step7Slide() {
+  const [copied, setCopied] = useState(false)
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(AGENT_PROMPT)
+      setCopied(true)
+      window.setTimeout(() => setCopied(false), 1800)
+    } catch {
+      /* clipboard unavailable */
+    }
+  }
+  return (
+    <>
+      <StepHeader
+        step={7}
+        color="red"
+        title="Tell the agent what to build."
+        lede="Open the Agent panel (Ctrl + L). Paste the prompt below — it points the agent at code.md and /screens, sets the rules, and tells it to plan before coding."
+      />
+      <div className="prompt-block">
+        <div className="prompt-block__bar">
+          <span className="prompt-block__title">Recommended prompt</span>
+          <button className="prompt-block__copy" onClick={copy} type="button">
+            {copied ? '✓ Copied' : 'Copy'}
+          </button>
+        </div>
+        <pre className="prompt-block__code"><code>{AGENT_PROMPT}</code></pre>
+      </div>
+      <div className="row cols-3">
+        <div className="card card--accent">
+          <Eyebrow color="blue">Iterate</Eyebrow>
+          <h3 style={{ marginTop: 10, fontSize: 17 }}>Talk like a designer</h3>
+          <p>"Tighten the hero padding." "Make the inventory cards quieter." Short, specific, one ask at a time.</p>
+        </div>
+        <div className="card card--yellow">
+          <Eyebrow color="yellow">Verify</Eyebrow>
+          <h3 style={{ marginTop: 10, fontSize: 17 }}>Run the dev server</h3>
+          <p>Keep <code>npm run dev</code> open. Reload after each change — catch regressions fast.</p>
+        </div>
+        <div className="card card--green">
+          <Eyebrow color="green">Ship</Eyebrow>
+          <h3 style={{ marginTop: 10, fontSize: 17 }}>Push to Vercel</h3>
+          <p>Push to GitHub → connect on Vercel → it auto-deploys. Same as how this guide is hosted.</p>
+        </div>
+      </div>
+    </>
+  )
+}
+
+function WrapSlide() {
+  return (
+    <div className="cover">
+      <div>
+        <Eyebrow color="green">Workshop · complete</Eyebrow>
+        <h1 style={{ marginTop: 14 }}>
+          Your <span className="accent-1">dream</span>{' '}
+          <span className="accent-2">app</span>{' '}
+          <span className="accent-3">is</span>{' '}
+          <span className="accent-4">real.</span>
+        </h1>
+        <p className="lede" style={{ marginTop: 18 }}>
+          You went from idea to design system to running code in two days — with no boilerplate
+          tax. Keep iterating: refine the design in Stitch, refine the code with the agent, deploy
+          on every push.
+        </p>
+        <div className="cover__meta">
+          <a className="btn" href="https://specflow-six.vercel.app/" target="_blank" rel="noreferrer">
+            Specflow
+          </a>
+          <a className="btn green" href="https://stitch.withgoogle.com/" target="_blank" rel="noreferrer">
+            Stitch
+          </a>
+          <a className="btn red" href="https://antigravity.google/download" target="_blank" rel="noreferrer">
+            Antigravity
+          </a>
+          <a className="btn ghost" href="https://vercel.com/" target="_blank" rel="noreferrer">
+            Vercel
+          </a>
+        </div>
+        <div className="note green" style={{ marginTop: 24 }}>
+          Share what you built. Bring it back next time. The same flow scales from a landing page
+          to a full product — you've done the hard part once.
+        </div>
+      </div>
+      <div className="orbit" aria-hidden="true">
+        <div className="orbit__ring" />
+        <div className="orbit__ring r2" />
+        <div className="orbit__ring r3" />
+        <span className="orbit__dot b" />
+        <span className="orbit__dot r" />
+        <span className="orbit__dot y" />
+        <span className="orbit__dot g" />
+        <div className="orbit__center">
+          <img src="/images/gdg-logo.webp" alt="" />
+        </div>
+      </div>
+    </div>
+  )
+}
+
+/* Local code block primitive */
+function CodeBlock({ code, language }: { code: string; language?: string }) {
+  const [copied, setCopied] = useState(false)
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(code)
+      setCopied(true)
+      window.setTimeout(() => setCopied(false), 1800)
+    } catch {
+      /* ignore */
+    }
+  }
+  return (
+    <div className="code-line">
+      {language && <span className="code-line__lang">{language}</span>}
+      <code className="code-line__code">{code}</code>
+      <button className="code-line__copy" onClick={copy} type="button">
+        {copied ? '✓' : 'Copy'}
+      </button>
+    </div>
+  )
+}
+
+/* ------------------------------------------------------------
    Export
 ------------------------------------------------------------ */
 
 export const slides: { title: string; render: () => ReactNode }[] = [
   { title: 'Welcome', render: CoverSlide },
-  { title: 'Today\'s plan', render: AgendaSlide },
+  { title: 'Day 1 · plan', render: AgendaSlide },
   { title: 'The two tools', render: ToolsSlide },
   { title: 'Open Specflow', render: Step1Slide },
   { title: 'Claim AI credit', render: Step2Slide },
@@ -679,6 +1088,15 @@ export const slides: { title: string; render: () => ReactNode }[] = [
   { title: 'Content prompt', render: Step8Slide },
   { title: 'Open Stitch', render: Step9Slide },
   { title: 'Generate + iterate', render: Step10Slide },
-  { title: 'Prep for tomorrow', render: TomorrowSlide },
-  { title: 'See you tomorrow', render: ClosingSlide },
+  { title: 'Prep for Day 2', render: TomorrowSlide },
+  { title: 'Day 1 · see you tomorrow', render: ClosingSlide },
+  { title: 'Day 2 · begins', render: Day2DividerSlide },
+  { title: 'Export from Stitch', render: Day2Step1Slide },
+  { title: 'Terminal + allow scripts', render: Day2Step2Slide },
+  { title: 'Scaffold Vite app', render: Day2Step3Slide },
+  { title: 'Open in Antigravity', render: Day2Step4Slide },
+  { title: 'Drop Stitch sections', render: Day2Step5Slide },
+  { title: 'Drop code.md', render: Day2Step6Slide },
+  { title: 'Tell the agent', render: Day2Step7Slide },
+  { title: 'You did it', render: WrapSlide },
 ]

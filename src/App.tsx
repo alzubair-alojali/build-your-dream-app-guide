@@ -61,7 +61,7 @@ function App() {
         <div className="brand">
           <img src="/images/gdg-logo.webp" alt="GDG" />
           <span>
-            Build Your Dream App <small>· Day 1 Guide</small>
+            Build Your Dream App <small>· Workshop Guide</small>
           </span>
         </div>
         <div
