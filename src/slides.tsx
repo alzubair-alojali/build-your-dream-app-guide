@@ -964,7 +964,7 @@ function Day2Step7Slide() {
         step={7}
         color="red"
         title="Tell the agent what to build."
-        lede="Open the Agent panel (Ctrl + L). Paste the prompt below — it points the agent at code.md and /screens, sets the rules, and tells it to plan before coding."
+        lede="Open the Agent panel (Ctrl + L). Attach the screens folder and code.md, paste the prompt below, pick Gemini 3.1 Pro + Planning mode, then send."
       />
       <div className="prompt-block">
         <div className="prompt-block__bar">
@@ -975,6 +975,17 @@ function Day2Step7Slide() {
         </div>
         <pre className="prompt-block__code"><code>{AGENT_PROMPT}</code></pre>
       </div>
+      <Shot
+        src="/screens/last-screen.webp"
+        alt="Antigravity agent panel staged with prompt, attachments, model and mode"
+        marks={[
+          { n: 1, label: 'Attach /screens and code.md', color: 'blue', top: '44%', right: '20%' },
+          { n: 2, label: 'Paste the prompt', color: 'red', top: '64%', right: '22%' },
+          { n: 3, label: 'Planning mode', color: 'yellow', bottom: '20%', left: '62%' },
+          { n: 4, label: 'Model: Gemini 3.1 Pro (High)', color: 'green', bottom: '20%', left: '72%' },
+          { n: 5, label: 'Send →', color: 'green', bottom: '20%', right: '4%' },
+        ]}
+      />
       <div className="row cols-3">
         <div className="card card--accent">
           <Eyebrow color="blue">Iterate</Eyebrow>
